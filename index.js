@@ -10,20 +10,41 @@ const __dirname = path.dirname(__filename);
 import express from 'express';
 const app = express();
 
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+// app.get('/', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'index.html'));
+// });
 
-app.get('/index.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
+// app.get('/index.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'index.html'));
+// });
 
-app.get('/about.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'about.html'));
-});
+// app.get('/about.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'about.html'));
+// });
 
-app.get('/contact-me.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'contact-me.html'));
+// app.get('/contact-me.html', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'contact-me.html'));
+// });
+
+app.get('/:name', (req, res, next) => {
+  const options = {
+    root: path.join(__dirname),
+    dotfiles: 'deny',
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true,
+    },
+  };
+
+  const fileName = req.params.name || null;
+  res.sendFile(fileName, options, (err) => {
+    console.log(fileName);
+    if (err) {
+      next(err);
+    } else {
+      console.log(`Sent: ${fileName}`);
+    }
+  });
 });
 
 app.listen(PORT, () => {
